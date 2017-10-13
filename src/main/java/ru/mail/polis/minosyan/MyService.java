@@ -39,8 +39,11 @@ public class MyService implements KVService {
         this.server.createContext("/v0/entity",
                 http -> {
                     final String id = extractId(http.getRequestURI().getQuery());
-                    if (id.equals(""))
-                        http.sendResponseHeaders(400, 0);
+                        if ("".equals(id)) {
+                            http.sendResponseHeaders(400, 0);
+                            http.close();
+                            return;
+                        }
                         switch (http.getRequestMethod()) {
                             case "GET":
                                 try {
