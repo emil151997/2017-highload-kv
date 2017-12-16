@@ -7,41 +7,38 @@ import java.util.NoSuchElementException;
 
 public class MyFileDAO implements MyDAO {
     @NotNull
-        private final File dir;
+    private final File dir;
 
     public MyFileDAO(@NotNull File dir) {
         this.dir = dir;
     }
 
-private File getFile(@NotNull final String key){
-        return new File(dir,key);
-}
+    private File getFile(@NotNull final String key) {
+        return new File(dir, key);
+    }
 
     @NotNull
     @Override
-    public  byte[] get(@NotNull final String key) throws NoSuchElementException, IllegalArgumentException, IOException {
+    public byte[] get(@NotNull final String key) throws NoSuchElementException, IllegalArgumentException, IOException {
         final File file = getFile(key);
-        final byte[] value =  new byte[(int) file.length()];
-
-
-        try(InputStream is = new FileInputStream(file)){
-         if   (is.read(value)!= value.length){
-             throw new IOException("Error read");
-         }
+        final byte[] value = new byte[(int) file.length()];
+        try (InputStream is = new FileInputStream(file)) {
+            if (is.read(value) != value.length) {
+                throw new IOException("Error read");
+            }
         }
-        return  value;
+        return value;
     }
 
     @Override
-    public void upsert(@NotNull final  String key, @NotNull final  byte[] value) throws IllegalArgumentException,IOException {
-    try(OutputStream os = new FileOutputStream(getFile(key))){
-        os.write(value);
-    }
-
+    public void upsert(@NotNull final String key, @NotNull final byte[] value) throws IllegalArgumentException, IOException {
+        try (OutputStream os = new FileOutputStream(getFile(key))) {
+            os.write(value);
+        }
     }
 
     @Override
-    public void delete(@NotNull final  String key) throws IllegalArgumentException, IOException {
+    public void delete(@NotNull final String key) throws IllegalArgumentException, IOException {
         getFile(key).delete();
     }
 }

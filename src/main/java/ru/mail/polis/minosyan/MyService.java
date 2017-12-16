@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
 
 public class MyService implements KVService {
 
-    private static final String PREFIX ="id=";
+    private static final String PREFIX = "id=";
 
     @NotNull
     private final HttpServer server;
@@ -19,13 +19,14 @@ public class MyService implements KVService {
     @NotNull
     private final MyDAO dao;
 
-    private static String extractId(@NotNull final String query){
+    private static String extractId(@NotNull final String query) {
 
-        if (!query.startsWith(PREFIX)){
+        if (!query.startsWith(PREFIX)) {
             throw new IllegalArgumentException("Illegal Sting");
         }
         return query.substring(PREFIX.length());
     }
+
     public MyService(int port, MyDAO dao) throws IOException {
         this.server = HttpServer.create(new InetSocketAddress(port), 0);
         this.dao = dao;
@@ -39,50 +40,51 @@ public class MyService implements KVService {
         this.server.createContext("/v0/entity",
                 http -> {
                     final String id = extractId(http.getRequestURI().getQuery());
-                        if ("".equals(id)) {
-                            http.sendResponseHeaders(400, 0);
-                            http.close();
-                            return;
-                        }
-                        switch (http.getRequestMethod()) {
-                            case "GET":
-                                try {
-                                    final byte[] getValue = dao.get(id);
-                                    http.sendResponseHeaders(200, getValue.length);
-                                    http.getResponseBody().write(getValue);
-                                } catch (NoSuchElementException  | IOException e) {
-                                    http.sendResponseHeaders(404, 0);
-                                }
-                                break;
-
-                            case "DELETE":
-                                dao.delete(id);
-                                http.sendResponseHeaders(202, 0);
-                                break;
-
-                            case "PUT":
-                                final int contentLength = Integer.valueOf(http.getRequestHeaders().getFirst("Content-Length"));
-                                final byte[] putValue = new byte[contentLength];
-                                http.getRequestBody().read(putValue);
-                                dao.upsert(id, putValue);
-                                http.sendResponseHeaders(201, 0);
-                                break;
-                            default:
-                                http.sendResponseHeaders(405,0);
-                        }
-
+                    if ("".equals(id)) {
+                        http.sendResponseHeaders(400, 0);
                         http.close();
+                        return;
+                    }
+                    switch (http.getRequestMethod()) {
+                        case "GET":
+                            try {
+                                final byte[] getValue = dao.get(id);
+                                http.sendResponseHeaders(200, getValue.length);
+                                http.getResponseBody().write(getValue);
+                            } catch (NoSuchElementException | IOException e) {
+                                http.sendResponseHeaders(404, 0);
+                            }
+                            break;
+
+                        case "DELETE":
+                            dao.delete(id);
+                            http.sendResponseHeaders(202, 0);
+                            break;
+
+                        case "PUT":
+                            final int contentLength = Integer.valueOf(http.getRequestHeaders().getFirst("Content-Length"));
+                            final byte[] putValue = new byte[contentLength];
+                            http.getRequestBody().read(putValue);
+                            dao.upsert(id, putValue);
+                            http.sendResponseHeaders(201, 0);
+                            break;
+                        default:
+                            http.sendResponseHeaders(405, 0);
+                    }
+
+                    http.close();
 
 
                 });
     }
+
     @Override
     public void start() {
-this.server.start();
+        this.server.start();
     }
 
     @Override
     public void stop() {
-this.server.stop(0);
+        this.server.stop(0);
     }
 }
