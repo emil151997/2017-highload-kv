@@ -78,10 +78,7 @@ public class MyService implements KVService {
                         default:
                             http.sendResponseHeaders(405, 0);
                     }
-
                     http.close();
-
-
                 });
     }
 

@@ -3,6 +3,9 @@ package ru.mail.polis.minosyan;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.NoSuchElementException;
 
 public class MyFileDAO implements MyDAO {
@@ -20,14 +23,12 @@ public class MyFileDAO implements MyDAO {
     @NotNull
     @Override
     public byte[] get(@NotNull final String key) throws NoSuchElementException, IllegalArgumentException, IOException {
-        final File file = getFile(key);
-        final byte[] value = new byte[(int) file.length()];
-        try (InputStream is = new FileInputStream(file)) {
-            if (is.read(value) != value.length) {
-                throw new IOException("Error read");
-            }
+        keyCheck(key);
+        Path path = Paths.get(dir.getPath(), key);
+        if (Files.notExists(path)) {
+            throw new NoSuchElementException();
         }
-        return value;
+        return Files.readAllBytes(path);
     }
 
     @Override
@@ -40,5 +41,11 @@ public class MyFileDAO implements MyDAO {
     @Override
     public void delete(@NotNull final String key) throws IllegalArgumentException, IOException {
         getFile(key).delete();
+    }
+
+    private void keyCheck(String key) {
+        if (key.isEmpty()) {
+            throw new IllegalArgumentException();
+        }
     }
 }
