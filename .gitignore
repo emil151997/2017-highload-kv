@@ -8,5 +8,13 @@
 !*.lua
 !*.jar
 
+# And CI
+!.travis.yml
+!build.gradle.kts
+!gradlew
+!LICENSE
+!README.md
+!settings.gradle
+
 # ...even if they are in subdirectories
 !*/
