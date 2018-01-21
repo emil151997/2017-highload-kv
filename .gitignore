@@ -6,6 +6,7 @@
 !*.java
 !LOADTEST.md
 !*.lua
+!*.jar
 
 # ...even if they are in subdirectories
 !*/
