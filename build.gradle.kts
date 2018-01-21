@@ -13,15 +13,18 @@ repositories {
 dependencies {
     // Annotations for better code documentation
     compile("com.intellij:annotations:12.0")
+	
     // Trove for Cache
     compile("net.sf.trove4j:trove4j:3.0.3")
+	
     // JUnit test framework
     testCompile("junit:junit:4.12")
 
     // HTTP client for unit tests
     testCompile("org.apache.httpcomponents:fluent-hc:4.5.3")
-    // Trove for test
-    testCompile("net.sf.trove4j:trove4j:3.0.3")
+	
+	// Guava for tests
+    testCompile("com.google.guava:guava:23.1-jre")
 }
 
 tasks {
