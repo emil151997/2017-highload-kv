@@ -2,6 +2,7 @@ package ru.mail.polis.minosyan;
 
 import org.jetbrains.annotations.NotNull;
 import gnu.trove.map.hash.THashMap;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,7 +12,8 @@ import java.util.NoSuchElementException;
 public class MyFileDAO implements MyDAO {
     @NotNull
     private final File dir;
-    private final THashMap<String,byte[]> Cache;
+    private final THashMap<String, byte[]> Cache;
+
     public MyFileDAO(@NotNull File dir) {
         this.dir = dir;
         Cache = new THashMap<>(20000);
@@ -26,7 +28,7 @@ public class MyFileDAO implements MyDAO {
     public byte[] get(@NotNull final String key) throws NoSuchElementException, IllegalArgumentException, IOException {
         keyCheck(key);
         byte[] value = Cache.get(key);
-        if (value!=null){
+        if (value != null) {
             return value;
         }
         Path path = Paths.get(dir.getPath(), key);
@@ -34,8 +36,8 @@ public class MyFileDAO implements MyDAO {
             throw new NoSuchElementException();
         }
         value = Files.readAllBytes(path);
-        Cache.put(key,value);
-        return Cache.get(key);
+        Cache.put(key, value);
+        return value;
     }
 
     @Override
